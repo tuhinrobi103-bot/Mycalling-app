@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Calling App</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 16px; background: #f2f4f8; }
+    h2 { text-align: center; }
+    #root { width: 100%; height: 80vh; }
+    .box { background: #fff; padding: 16px; border-radius: 12px; max-width: 420px; margin: 20px auto; }
+    input, button { width: 100%; padding: 12px; margin-top: 10px; font-size: 16px; box-sizing: border-box; }
+    button { background: #0a66ff; color: #fff; border: 0; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h2>My Calling App</h2>
+  <div class="box" id="form">
+    <input id="roomId" placeholder="রুমের নাম (যেমন room1)">
+    <input id="userName" placeholder="আপনার নাম">
+    <button onclick="startCall()">কলে ঢুকুন</button>
+  </div>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+  <script>
+    const appID = 1558765415; // এখানে আপনার AppID সংখ্যা বসবে
+    const serverSecret = ""; // টেস্টের জন্য, পরে সরিয়ে ফেলব
+
+    function startCall() {
+      const roomID = document.getElementById('roomId').value;
+      const userName = document.getElementById('userName').value;
+      if (!roomID || !userName) { alert('রুমের নাম আর আপনার নাম দিন'); return; }
+      const userID = String(Math.floor(Math.random() * 100000));
+      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
+      const zp = ZegoUIKitPrebuilt.create(kitToken);
+      document.getElementById('form').style.display = 'none';
+      zp.joinRoom({
+        container: document.getElementById('root'),
+        scenario: { mode: ZegoUIKitPrebuilt.GroupCall },
+        sharedLinks: [{ name: 'লিংক', url: location.origin + location.pathname + '?roomID=' + roomID }]
+      });
+    }
+  </script>
+</body>
+</html>
